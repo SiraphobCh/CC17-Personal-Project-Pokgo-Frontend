@@ -41,6 +41,7 @@ export default function LoginForm() {
     try {
       await login(input);
       navigate('/');
+      toast.success('login successfully');
     } catch (error) {
       console.log(error);
       if (error instanceof AxiosError) {

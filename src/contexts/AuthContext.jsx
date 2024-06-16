@@ -1,11 +1,29 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import authApi from '../apis/auth';
-import { setAccessToken } from '../utils/local-storage';
+import { getAccessToken, removeAccessToken, setAccessToken } from '../utils/local-storage';
 
 export const AuthContext = createContext();
 
 export default function AuthContextProvider({ children }) {
   const [authUser, setAuthUser] = useState(null);
+  const [isAuthUserLoading, setIsAuthUserLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (getAccessToken()) {
+          const res = await authApi.getAuthUser();
+          setAuthUser(res.data.user);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsAuthUserLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const login = async (credentials) => {
     const res = await authApi.login(credentials);
@@ -14,9 +32,14 @@ export default function AuthContextProvider({ children }) {
     setAuthUser(resGetAuthUser.data.user);
   };
 
-  const logout = () => {};
+  const logout = () => {
+    removeAccessToken();
+    setAuthUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ authUser, login, logout }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ authUser, login, logout, isAuthUserLoading }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
