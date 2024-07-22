@@ -3,7 +3,7 @@ import MenuItem from './MenuItem';
 
 const menulist = [
   { id: 1, label: 'Events', to: '/' },
-  { id: 2, label: 'Discover', to: '/location' },
+  { id: 2, label: 'Discover', to: '/discover' },
 ];
 
 export default function Menu() {

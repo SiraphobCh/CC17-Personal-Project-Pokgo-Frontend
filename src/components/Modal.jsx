@@ -1,4 +1,16 @@
+import { useEffect } from "react";
+
 export default function Modal({ width = 30, title, children, open, onClose }) {
+  useEffect(() => {
+    const handlePressEsc = (e) => {
+      if (e.keyCode === 27) {
+        onClose?.();
+      }
+    };
+    document.addEventListener("keydown", handlePressEsc);
+    return () => document.removeEventListener("keydown", handlePressEsc);
+  }, [onClose]);
+
   return (
     <>
       {open ? (

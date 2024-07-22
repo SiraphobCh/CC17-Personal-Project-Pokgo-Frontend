@@ -1,29 +1,51 @@
-import { lazy } from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import ProtectedRoute from '../features/authentication/components/ProtectedRoute';
-import RedirectIfLogged from '../features/authentication/components/RedirectIfLogged';
+import { lazy } from "react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import ProtectedRoute from "../features/authentication/components/ProtectedRoute";
+import PageContainer from "../pages/PageContainer";
+import AuthContextProvider from "../contexts/AuthContext";
 
-const HomePage = lazy(() => import('../pages/HomePage'));
-const LoginPage = lazy(() => import('../pages/LoginPage'));
-const MainContainer = lazy(() => import('../layouts/MainContainer'));
+const HomePage = lazy(() => import("../pages/HomePage"));
+const LoginPage = lazy(() => import("../pages/LoginPage"));
+const MainContainer = lazy(() => import("../layouts/MainContainer"));
+const DiscoverPage = lazy(() => import("../pages/DiscoverPage"));
+const CreateEventPage = lazy(() => import("../pages/CreateEventPage"));
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: (
-      <ProtectedRoute>
+      <AuthContextProvider>
         <MainContainer />
-      </ProtectedRoute>
+      </AuthContextProvider>
     ),
-    children: [{ path: '/', element: <HomePage /> }],
-  },
-  {
-    path: '/login',
-    element: (
-      <RedirectIfLogged>
-        <LoginPage />
-      </RedirectIfLogged>
-    ),
+    children: [
+      {
+        path: "/",
+        element: (
+          <ProtectedRoute>
+            <PageContainer />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            path: "/",
+            element: <HomePage />,
+          },
+          {
+            path: "/events",
+            element: <CreateEventPage />,
+          },
+          {
+            path: "/discover",
+            element: <DiscoverPage />,
+          },
+        ],
+      },
+      {
+        path: "/login",
+        element: <LoginPage />,
+      },
+    ],
   },
 ]);
 
